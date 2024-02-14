@@ -17,16 +17,9 @@ type SKUHandler struct {
 	scanned   map[string]int
 }
 
-func New() *SKUHandler {
-	items := map[string]Item{
-		"A": {SKU: "A", UnitPrice: 50, MultiBuyQuantity: 3, SpecialPrice: 130},
-		"B": {SKU: "B", UnitPrice: 30, MultiBuyQuantity: 2, SpecialPrice: 45},
-		"C": {SKU: "C", UnitPrice: 20},
-		"D": {SKU: "D", UnitPrice: 15},
-	}
-
+func New(stockList map[string]Item) *SKUHandler {
 	return &SKUHandler{
-		stockList: items,
+		stockList: stockList,
 		scanned:   make(map[string]int),
 	}
 }
