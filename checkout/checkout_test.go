@@ -1,7 +1,7 @@
 package checkout
 
 import (
-	"reflect"
+	"sort"
 	"testing"
 )
 
@@ -12,6 +12,22 @@ var testStock = map[string]Item{
 	"D": {SKU: "D", UnitPrice: 15},
 	"E": {SKU: "E", UnitPrice: 50, MultiBuyQuantity: 5, SpecialPrice: 200},
 	"F": {SKU: "F", UnitPrice: 25, MultiBuyQuantity: 10, SpecialPrice: 225},
+}
+
+func equalSlices(a, b []string) bool {
+	if len(a) != len(b) {
+		return false
+	}
+
+	sort.Strings(a)
+	sort.Strings(b)
+
+	for i, v := range a {
+		if v != b[i] {
+			return false
+		}
+	}
+	return true
 }
 
 func TestScan(t *testing.T) {
@@ -55,7 +71,7 @@ func TestScan(t *testing.T) {
 					len(unrecognizedSKUs))
 			}
 
-			if !reflect.DeepEqual(unrecognizedSKUs, tc.expectedUnrecognized) {
+			if !equalSlices(unrecognizedSKUs, tc.expectedUnrecognized) {
 				t.Errorf(
 					"expected unrecognized SKUs: %v, got: %v",
 					tc.expectedUnrecognized,
