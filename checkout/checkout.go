@@ -1,5 +1,7 @@
 package checkout
 
+import "fmt"
+
 type Checkout interface {
 	Scan(item string)
 	CalculateTotal() int
@@ -25,18 +27,30 @@ func New(stockList map[string]Item) *SKUHandler {
 }
 
 func (sh *SKUHandler) Scan(items ...string) []string {
-	var unrecognizedSKUList []string
+	unrecognizedSKUs := make(map[string]int)
 
 	for _, item := range items {
 		_, exists := sh.stockList[item]
 		if !exists {
-			unrecognizedSKUList = append(unrecognizedSKUList, item)
-			continue
+			unrecognizedSKUs[item]++
+		} else {
+			sh.scanned[item]++
 		}
-		sh.scanned[item]++
 	}
 
-	return unrecognizedSKUList
+	// tally up unrecognized SKUs instead of printing the same SKU multiple times
+	// e.g. unrecognizedSKUs = "Z x5, Y x3, X"
+	// rather than unrecognized SKUs = "Z Z Z Y Y Y Z Z X"
+	var result []string
+	for sku, count := range unrecognizedSKUs {
+		if count > 1 {
+			result = append(result, fmt.Sprintf("%s: x%d", sku, count))
+		} else {
+			result = append(result, sku)
+		}
+	}
+
+	return result
 }
 
 func (sh *SKUHandler) CalculateTotalPrice() int {

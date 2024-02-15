@@ -1,6 +1,7 @@
 package checkout
 
 import (
+	"reflect"
 	"testing"
 )
 
@@ -30,7 +31,7 @@ func TestScan(t *testing.T) {
 			name:                 "Some items exist with some unrecognized SKUs",
 			itemsToScan:          []string{"B", "B", "C", "D", "D", "B", "Z", "Y", "Z"},
 			expectedTotal:        125,
-			expectedUnrecognized: []string{"Z", "Y", "Z"},
+			expectedUnrecognized: []string{"Z: x2", "Y"},
 		},
 		{
 			name:                 "All scanned items are unrecognized with expected total of 0",
@@ -52,6 +53,14 @@ func TestScan(t *testing.T) {
 					"expected %d unrecognized SKUs, got %d",
 					len(tc.expectedUnrecognized),
 					len(unrecognizedSKUs))
+			}
+
+			if !reflect.DeepEqual(unrecognizedSKUs, tc.expectedUnrecognized) {
+				t.Errorf(
+					"expected unrecognized SKUs: %v, got: %v",
+					tc.expectedUnrecognized,
+					unrecognizedSKUs,
+				)
 			}
 
 			total := basket.CalculateTotalPrice()
