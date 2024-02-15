@@ -61,3 +61,36 @@ func TestScan(t *testing.T) {
 		})
 	}
 }
+
+func TestCalculateTotalPrice(t *testing.T) {
+	testCases := []struct {
+		name          string
+		itemsToScan   []string
+		expectedTotal int
+	}{
+		{
+			name:          "all SKUs exist, correct total calculated",
+			itemsToScan:   []string{"A", "B", "B", "A", "A", "A", "C", "D"},
+			expectedTotal: 260,
+		},
+		{
+			name:          "some SKUs exist, some unrecognized SKUs",
+			itemsToScan:   []string{"E", "E", "E", "F", "Y", "E", "B", "E", "B", "D", "Z"},
+			expectedTotal: 285,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+
+			basket := New(testStock)
+			basket.Scan(tc.itemsToScan...)
+			total := basket.CalculateTotalPrice()
+			// ignore list of unexpected SKUs for this test
+
+			if total != tc.expectedTotal {
+				t.Errorf("expected total to be %d, got a total of %d", tc.expectedTotal, total)
+			}
+		})
+	}
+}
