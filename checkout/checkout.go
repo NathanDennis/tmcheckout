@@ -2,11 +2,6 @@ package checkout
 
 import "fmt"
 
-type Checkout interface {
-	Scan(item string)
-	CalculateTotal() int
-}
-
 type Item struct {
 	SKU              string
 	UnitPrice        int
